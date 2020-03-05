@@ -1,34 +1,31 @@
 package com.oceanos.jeroRPC;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class AnswerMsg {
     private Object result;
-    private String message;
-    private StackTraceElement[] stackTrace;
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    private Exception exception;
 
     public AnswerMsg() {
     }
 
-    public Object getResult() {
+    Object getResult() {
         return result;
     }
 
-    public void setResult(Object result) {
+    void setResult(Object result) {
         this.result = result;
     }
 
-    public String getMessage() {
-        return message;
+    Exception getException() {
+        return exception;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public StackTraceElement[] getStackTrace() {
-        return stackTrace;
-    }
-
-    public void setStackTrace(StackTraceElement[] stackTrace) {
-        this.stackTrace = stackTrace;
+    void setException(Exception exception) {
+        this.exception = exception;
     }
 }

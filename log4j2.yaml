@@ -8,6 +8,6 @@ Configuration:
         Pattern: "[%-4level] %c{1} - %msg%n"
   Loggers:
     Root:
-      level: debug
+      level: info
       AppenderRef:
         ref: Console

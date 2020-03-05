@@ -50,6 +50,7 @@ public class ZeroRPCClient<T> {
 
     public void start(){
         executorService.submit(()->{
+            logger.info("Start");
             try (ZContext context = new ZContext()){
                 req = context.createSocket(SocketType.REQ);
                 req.connect(address);
@@ -62,6 +63,7 @@ public class ZeroRPCClient<T> {
                         logger.debug("Send request "+requestStr);
                         req.send(requestStr);
                         String answerStr = req.recvStr();
+                        logger.debug("Receive answer "+answerStr);
                         AnswerMsg answerMsg = objectMapper.readValue(answerStr, AnswerMsg.class);
                         request.getFuture().complete(answerMsg);
                     } catch (InterruptedException e) {
@@ -84,7 +86,7 @@ public class ZeroRPCClient<T> {
                     logger.debug("Call method "+method.getName());
                     logger.debug("Args type"+ Arrays.toString(method.getParameterTypes()));
                     //CompletableFuture<AnswerMsg> future = invokeAsync(method.getName(), method.getReturnType(), args);
-
+                    //TODO: исправление ошибки при попытке дессериализации ImmutableList реализовать иначе
                     /*for (int i = 0; i < args.length; i++) {
                         Object o = args[i];
                         if (o.getClass().getName().contains("java.util.ImmutableCollections")){
@@ -93,11 +95,14 @@ public class ZeroRPCClient<T> {
                     }*/
                     CompletableFuture<AnswerMsg> future = invokeAsync(method, args);
                     AnswerMsg answerMsg = future.get();
-                    if (answerMsg.getMessage()!=null){
-                        Exception e = new Exception(answerMsg.getMessage());
-                        e.setStackTrace(answerMsg.getStackTrace());
-                        logger.error("Error from service ", e);
-                        throw e;
+                    if (answerMsg.getException()!=null){
+                        if (answerMsg.getException() instanceof RPCServiceException){
+                            logger.error("Error from service ",answerMsg.getException());
+                        } else {
+                            Exception e = answerMsg.getException();
+                            logger.debug("Error from service ", e);
+                            throw e;
+                        }
                     }
                     return answerMsg.getResult();
                 });
@@ -143,5 +148,6 @@ public class ZeroRPCClient<T> {
 
     public void shutdown(){
         executorService.shutdownNow();
+        logger.info("Shutdown");
     }
 }

@@ -75,7 +75,7 @@ class ZeroRPCClientTest {
         String expected = "s1,s2";
         List<String> list = List.of("s1","s2");
 
-        assertThrows(Exception.class, ()->{
+        assertDoesNotThrow(()->{
             service.concatList(list);
         });
 

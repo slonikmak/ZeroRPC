@@ -33,7 +33,7 @@ public class ZeroRPCService<T> {
 
     public void start(){
         executorService.submit(()->{
-
+            logger.info("Start");
             try (ZContext zContext = new ZContext()){
                 rep = zContext.createSocket(SocketType.REP);
                 rep.bind(address);
@@ -49,10 +49,13 @@ public class ZeroRPCService<T> {
                         //answerMsg.setException(null);
                         processAnswer(answerMsg);
                     } catch (Exception e) {
-                        processException(e);
+                        logger.debug("Catch exception "+e.getMessage());
+                        processInternalException(e);
+                        //processException(e);
                         //e.printStackTrace();
                     } catch (Throwable throwable) {
-                        throwable.printStackTrace();
+                        logger.debug("Catch throwable "+throwable.getMessage());
+                        processInternalException(throwable);
                     }
                 }
             }
@@ -71,23 +74,29 @@ public class ZeroRPCService<T> {
                     .bindTo(wrappedService)
                     .invokeWithArguments(Arrays.asList(message.getArgs()));
         } catch (Exception e) {
-            logger.debug("GET Exception");
+            logger.debug("Catch Exception "+e.getMessage());
             processException(e);
         }
         return null;
     }
 
+    private void processInternalException(Throwable throwable){
+        RPCServiceException exception = new RPCServiceException("Internal RPCService exception:" + throwable.getMessage());
+        exception.setStackTrace(throwable.getStackTrace());
+        processException(exception);
+    }
+
     private void processException(Exception e){
         AnswerMsg answerMsg = new AnswerMsg();
         answerMsg.setResult(null);
-        answerMsg.setMessage(e.getMessage());
-        answerMsg.setStackTrace(e.getStackTrace());
+        answerMsg.setException(e);
         try {
             String answerStr = objectMapper.writeValueAsString(answerMsg);
+            logger.debug("Send answer "+answerStr);
             rep.send(answerStr);
         } catch (JsonProcessingException ex) {
             //ex.printStackTrace();
-            logger.error("Error while serialize answer", ex);
+            logger.error("Error while serialize answer message", ex);
         }
 
     }
@@ -105,5 +114,6 @@ public class ZeroRPCService<T> {
 
     public void shutdown(){
         executorService.shutdownNow();
+        logger.info("Shutdown");
     }
 }
