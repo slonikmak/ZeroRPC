@@ -60,6 +60,7 @@ public class ZeroRPCClient<T> {
                         request.getFuture().complete(answerMsg);
                     } catch (InterruptedException e) {
                         logger.debug("Interrupt loop");
+                        return;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
