@@ -29,7 +29,7 @@ public class ZeroRPCService<T> {
         this.address = address;
         this.wrappedService = wrappedService;
         executorService = Executors.newSingleThreadExecutor();
-        objectMapper = new ObjectMapper(new MessagePackFactory());
+        objectMapper = new ObjectMapper();
     }
 
     public void start(){
@@ -40,10 +40,10 @@ public class ZeroRPCService<T> {
                 rep.bind(address);
                 while (!Thread.currentThread().isInterrupted()){
                     logger.debug("Waiting for receive....");
-                    byte[] requestBytes = rep.recv();
+                    String requestStr = rep.recvStr();
                     logger.debug("Received request: ");
                     try {
-                        RPCMessage requestMsg = objectMapper.readValue(requestBytes, RPCMessage.class);
+                        RPCMessage requestMsg = objectMapper.readValue(requestStr, RPCMessage.class);
                         Object result = invoke(requestMsg);
                         if (result instanceof Exception) processException((Exception) result);
                         else {
@@ -92,9 +92,9 @@ public class ZeroRPCService<T> {
         answerMsg.setResult(null);
         answerMsg.setException(e);
         try {
-            byte[] answerBytes = objectMapper.writeValueAsBytes(answerMsg);
-            logger.debug("Send answer ");
-            rep.send(answerBytes);
+            String answerStr = objectMapper.writeValueAsString(answerMsg);
+            logger.debug("Send answer "+answerStr);
+            rep.send(answerStr);
         } catch (JsonProcessingException ex) {
             logger.error("Error while serialize answer message", ex);
         }
@@ -103,9 +103,9 @@ public class ZeroRPCService<T> {
 
     private void processAnswer(AnswerMsg answerMsg){
         try {
-            byte[] answerBytes = objectMapper.writeValueAsBytes(answerMsg);
-            logger.debug("Send answer ");
-            rep.send(answerBytes);
+            String answerStr = objectMapper.writeValueAsString(answerMsg);
+            logger.debug("Send answer "+answerStr);
+            rep.send(answerStr);
         } catch (JsonProcessingException e) {
             logger.error("Error while serialize answer", e);
         }

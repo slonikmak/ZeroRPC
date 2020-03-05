@@ -2,7 +2,6 @@ package com.oceanos.jeroRPC;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.msgpack.jackson.dataformat.MessagePackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.SocketType;
@@ -34,7 +33,7 @@ public class ZeroRPCClient<T> {
         executorService = Executors.newSingleThreadExecutor();
         service = generateService(serviceType);
         requestQueue = new LinkedBlockingQueue<>();
-        objectMapper = new ObjectMapper(new MessagePackFactory());
+        objectMapper = new ObjectMapper();
     }
 
     public T getService() {
@@ -52,13 +51,12 @@ public class ZeroRPCClient<T> {
                     try {
                         Request request = requestQueue.take();
                         logger.debug("Take request " + request.getRpcMessage().getMethodName());
-                        //String requestStr = objectMapper.writeValueAsString(request.getRpcMessage());
-                        byte[] requestBytes = objectMapper.writeValueAsBytes(request.getRpcMessage());
-                        logger.debug("Send request ");
-                        req.send(requestBytes);
-                        byte[] answerBytes = req.recv();
-                        logger.debug("Receive answer ");
-                        AnswerMsg answerMsg = objectMapper.readValue(answerBytes, AnswerMsg.class);
+                        String requestStr = objectMapper.writeValueAsString(request.getRpcMessage());
+                        logger.debug("Send request "+requestStr);
+                        req.send(requestStr);
+                        String answerStr = req.recvStr();
+                        logger.debug("Receive answer " + answerStr);
+                        AnswerMsg answerMsg = objectMapper.readValue(answerStr, AnswerMsg.class);
                         request.getFuture().complete(answerMsg);
                     } catch (InterruptedException e) {
                         logger.debug("Interrupt loop");
