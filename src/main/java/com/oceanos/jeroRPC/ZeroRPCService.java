@@ -2,6 +2,7 @@ package com.oceanos.jeroRPC;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.msgpack.jackson.dataformat.MessagePackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.SocketType;
@@ -28,7 +29,7 @@ public class ZeroRPCService<T> {
         this.address = address;
         this.wrappedService = wrappedService;
         executorService = Executors.newSingleThreadExecutor();
-        objectMapper = new ObjectMapper(/*new MessagePackFactory()*/);
+        objectMapper = new ObjectMapper(new MessagePackFactory());
     }
 
     public void start(){
@@ -39,10 +40,10 @@ public class ZeroRPCService<T> {
                 rep.bind(address);
                 while (!Thread.currentThread().isInterrupted()){
                     logger.debug("Waiting for receive....");
-                    String requestStr = rep.recvStr();
-                    logger.debug("Received request: "+requestStr);
+                    byte[] requestBytes = rep.recv();
+                    logger.debug("Received request: ");
                     try {
-                        RPCMessage requestMsg = objectMapper.readValue(requestStr, RPCMessage.class);
+                        RPCMessage requestMsg = objectMapper.readValue(requestBytes, RPCMessage.class);
                         Object result = invoke(requestMsg);
                         if (result instanceof Exception) processException((Exception) result);
                         else {
@@ -91,9 +92,9 @@ public class ZeroRPCService<T> {
         answerMsg.setResult(null);
         answerMsg.setException(e);
         try {
-            String answerStr = objectMapper.writeValueAsString(answerMsg);
-            logger.debug("Send answer "+answerStr);
-            rep.send(answerStr);
+            byte[] answerBytes = objectMapper.writeValueAsBytes(answerMsg);
+            logger.debug("Send answer ");
+            rep.send(answerBytes);
         } catch (JsonProcessingException ex) {
             logger.error("Error while serialize answer message", ex);
         }
@@ -102,9 +103,9 @@ public class ZeroRPCService<T> {
 
     private void processAnswer(AnswerMsg answerMsg){
         try {
-            String answerStr = objectMapper.writeValueAsString(answerMsg);
-            logger.debug("Send answer "+answerStr);
-            rep.send(answerStr);
+            byte[] answerBytes = objectMapper.writeValueAsBytes(answerMsg);
+            logger.debug("Send answer ");
+            rep.send(answerBytes);
         } catch (JsonProcessingException e) {
             logger.error("Error while serialize answer", e);
         }
