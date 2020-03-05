@@ -44,10 +44,14 @@ public class ZeroRPCService<T> {
                     try {
                         RPCMessage requestMsg = objectMapper.readValue(requestStr, RPCMessage.class);
                         Object result = invoke(requestMsg);
-                        AnswerMsg answerMsg = new AnswerMsg();
-                        answerMsg.setResult(result);
-                        //answerMsg.setException(null);
-                        processAnswer(answerMsg);
+                        if (result instanceof Exception) processException((Exception) result);
+                        else {
+                            AnswerMsg answerMsg = new AnswerMsg();
+                            answerMsg.setResult(result);
+                            //answerMsg.setException(null);
+                            processAnswer(answerMsg);
+                        }
+
                     } catch (Exception e) {
                         logger.debug("Catch exception "+e.getMessage());
                         processInternalException(e);
@@ -75,9 +79,10 @@ public class ZeroRPCService<T> {
                     .invokeWithArguments(Arrays.asList(message.getArgs()));
         } catch (Exception e) {
             logger.debug("Catch Exception "+e.getMessage());
-            processException(e);
+            //processException(e);
+            return e;
         }
-        return null;
+        //return null;
     }
 
     private void processInternalException(Throwable throwable){
@@ -104,6 +109,7 @@ public class ZeroRPCService<T> {
     private void processAnswer(AnswerMsg answerMsg){
         try {
             String answerStr = objectMapper.writeValueAsString(answerMsg);
+            logger.debug("Send answer "+answerStr);
             rep.send(answerStr);
         } catch (JsonProcessingException e) {
             //e.printStackTrace();

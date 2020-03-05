@@ -61,6 +61,13 @@ class ZeroRPCClientTest {
     }
 
     @Test
+    public void throwExceptionFromMethodTest(){
+        assertThrows(Exception.class, ()->{
+            service.throwException();
+        });
+    }
+
+    @Test
     public void concatListTest(){
         String expected = "s1,s2";
         List<String> list = new ArrayList<>();
@@ -70,7 +77,7 @@ class ZeroRPCClientTest {
         assertEquals(expected, actual);
     }
 
-    @Test
+   /* @Test
     public void tryToSendImmutableListToListArg(){
         String expected = "s1,s2";
         List<String> list = List.of("s1","s2");
@@ -79,14 +86,9 @@ class ZeroRPCClientTest {
             service.concatList(list);
         });
 
-    }
+    }*/
 
-    @Test
-    public void throwExceptionFromMethodTest(){
-        assertThrows(Exception.class, ()->{
-            service.throwException();
-        });
-    }
+
 
     @AfterAll
     static void shutdown(){
