@@ -1,6 +1,5 @@
 package com.oceanos.jeroRPC;
 
-import java.util.stream.Stream;
 
 public class RPCServiceException extends Exception {
 

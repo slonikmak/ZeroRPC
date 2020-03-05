@@ -6,21 +6,21 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class RPCMessage {
 
-    private Class returnType;
+    private Class<?> returnType;
 
     private String methodName;
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, /*include = JsonTypeInfo.As.PROPERTY,*/ property = "type")
     private Object[] args;
 
-    private Class[] parameterTypes;
+    private Class<?>[] parameterTypes;
 
 
-    Class getReturnType() {
+    Class<?> getReturnType() {
         return returnType;
     }
 
-    void setReturnType(Class returnType) {
+    void setReturnType(Class<?> returnType) {
         this.returnType = returnType;
     }
 
@@ -40,11 +40,11 @@ public class RPCMessage {
         this.args = args;
     }
 
-    Class[] getParameterTypes() {
+    Class<?>[] getParameterTypes() {
         return parameterTypes;
     }
 
-    void setParameterTypes(Class[] parameterTypes) {
+    void setParameterTypes(Class<?>[] parameterTypes) {
         this.parameterTypes = parameterTypes;
     }
 }

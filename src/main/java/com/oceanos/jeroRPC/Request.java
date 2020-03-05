@@ -3,7 +3,7 @@ package com.oceanos.jeroRPC;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * @author slonikmak on 22.04.2019.
+ * @author Oceanos
  */
 class Request {
     private RPCMessage rpcMessage;

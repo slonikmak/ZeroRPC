@@ -48,15 +48,12 @@ public class ZeroRPCService<T> {
                         else {
                             AnswerMsg answerMsg = new AnswerMsg();
                             answerMsg.setResult(result);
-                            //answerMsg.setException(null);
                             processAnswer(answerMsg);
                         }
 
                     } catch (Exception e) {
                         logger.debug("Catch exception "+e.getMessage());
                         processInternalException(e);
-                        //processException(e);
-                        //e.printStackTrace();
                     } catch (Throwable throwable) {
                         logger.debug("Catch throwable "+throwable.getMessage());
                         processInternalException(throwable);
@@ -79,10 +76,8 @@ public class ZeroRPCService<T> {
                     .invokeWithArguments(Arrays.asList(message.getArgs()));
         } catch (Exception e) {
             logger.debug("Catch Exception "+e.getMessage());
-            //processException(e);
             return e;
         }
-        //return null;
     }
 
     private void processInternalException(Throwable throwable){
@@ -100,7 +95,6 @@ public class ZeroRPCService<T> {
             logger.debug("Send answer "+answerStr);
             rep.send(answerStr);
         } catch (JsonProcessingException ex) {
-            //ex.printStackTrace();
             logger.error("Error while serialize answer message", ex);
         }
 
@@ -112,7 +106,6 @@ public class ZeroRPCService<T> {
             logger.debug("Send answer "+answerStr);
             rep.send(answerStr);
         } catch (JsonProcessingException e) {
-            //e.printStackTrace();
             logger.error("Error while serialize answer", e);
         }
 
