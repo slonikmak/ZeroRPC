@@ -13,6 +13,7 @@ public class AnswerMsg {
     public AnswerMsg() {
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
     Object getResult() {
         return result;
     }

@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,7 +79,7 @@ class ZeroRPCClientTest {
         assertEquals(expected, actual);
     }
 
-   /* @Test
+    @Test
     public void tryToSendImmutableListToListArg(){
         String expected = "s1,s2";
         List<String> list = List.of("s1","s2");
@@ -86,7 +88,32 @@ class ZeroRPCClientTest {
             service.concatList(list);
         });
 
-    }*/
+    }
+
+    @Test
+    public void mapAsArgumentTest(){
+        Map<String, Integer> map = new HashMap<>();
+        map.put("1",1);
+        map.put("2",2);
+        int actual = service.mapSize(map);
+        assertEquals(map.size(), actual);
+    }
+
+    @Test
+    public void mapAsReturnedType(){
+        String key = "1";
+        int value = 1;
+        Map<String, Integer> actual = service.createMap(key, value);
+        Map<String, Integer> expected = new HashMap<>();
+        expected.put(key, value);
+        assertEquals(expected.get(key), actual.get(key));
+    }
+
+    @Test
+    public void returnPOJOTest(){
+        SimplePOJO actual = service.addPOJO("John", 55);
+        assertEquals(1, actual.getId());
+    }
 
 
 

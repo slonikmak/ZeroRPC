@@ -1,6 +1,8 @@
 package com.oceanos.jeroRPC;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ServiceImpl implements Service {
@@ -42,5 +44,26 @@ public class ServiceImpl implements Service {
     @Override
     public void throwException() throws Exception {
         int a = 1/0;
+    }
+
+    @Override
+    public int mapSize(Map<String, Integer> map) {
+        return map.size();
+    }
+
+    @Override
+    public Map<String, Integer> createMap(String key, int value) {
+        Map<String, Integer> result = new HashMap<>();
+        result.put(key, value);
+        return result;
+    }
+
+    @Override
+    public SimplePOJO addPOJO(String name, Integer age) {
+        SimplePOJO result = new SimplePOJO();
+        result.setAge(age);
+        result.setName(name);
+        result.setId(1);
+        return result;
     }
 }

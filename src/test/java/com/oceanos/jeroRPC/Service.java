@@ -1,6 +1,7 @@
 package com.oceanos.jeroRPC;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Service {
     int getRandom();
@@ -11,4 +12,7 @@ public interface Service {
     void print(String msg);
     int boxedArg(Integer i);
     void throwException() throws Exception;
+    int mapSize(Map<String, Integer> map);
+    Map<String, Integer> createMap(String key, int value);
+    SimplePOJO addPOJO(String name, Integer age);
 }
