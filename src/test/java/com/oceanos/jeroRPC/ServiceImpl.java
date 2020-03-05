@@ -1,5 +1,6 @@
 package com.oceanos.jeroRPC;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class ServiceImpl implements Service {
 
     @Override
     public List<String> stringsToList(String s1, String s2) {
-        return List.of(s1, s2);
+        return List.of(s1, s2).stream().collect(Collectors.toList());
     }
 
     @Override
