@@ -1,0 +1,13 @@
+Configuration:
+#  status: debug
+  Appenders:
+    Console:
+      name: Console
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "[%-4level] %c{1} - %msg%n"
+  Loggers:
+    Root:
+      level: debug
+      AppenderRef:
+        ref: Console
