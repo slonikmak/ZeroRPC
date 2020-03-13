@@ -24,6 +24,7 @@ class ZeroRPCClientTest {
         service = zeroRPCClient.getService();
         zeroRPCService.start();
         zeroRPCClient.start();
+
     }
 
 
