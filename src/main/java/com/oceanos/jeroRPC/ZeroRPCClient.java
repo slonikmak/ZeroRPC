@@ -42,7 +42,7 @@ public class ZeroRPCClient<T> {
 
     public void start() {
         executorService.submit(() -> {
-            logger.info("Start");
+            logger.info("Start ");
             try (ZContext context = new ZContext()) {
                 req = context.createSocket(SocketType.REQ);
                 req.connect(address);
