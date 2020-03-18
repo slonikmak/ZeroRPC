@@ -15,4 +15,5 @@ public interface Service {
     int mapSize(Map<String, Integer> map);
     Map<String, Integer> createMap(String key, int value);
     SimplePOJO addPOJO(String name, Integer age);
+    String timeOutMethod(int timeOut, String returnValue);
 }

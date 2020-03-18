@@ -67,4 +67,14 @@ public class ServiceImpl implements Service {
         result.setId(1);
         return result;
     }
+
+    @Override
+    public String timeOutMethod(int timeOut, String returnValue) {
+        try {
+            Thread.sleep(timeOut);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return returnValue;
+    }
 }

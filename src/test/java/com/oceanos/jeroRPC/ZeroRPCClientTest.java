@@ -116,6 +116,18 @@ class ZeroRPCClientTest {
         assertEquals(1, actual.getId());
     }
 
+    @Test
+    public void runWithTimeOutTest(){
+        String[] result = new String[1];
+        ZeroRPCClient.runWithTimeOut(()->{
+            result[0] = service.timeOutMethod(1000, "Done");
+        }, 100, ()->{
+            result[0] = "Fail";
+        });
+
+        assertEquals("Fail", result[0]);
+    }
+
 
 
     @AfterAll
